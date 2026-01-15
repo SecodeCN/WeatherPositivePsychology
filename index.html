@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Weather & Positive Psychology - Uplifting messages based on current weather">
+    <title>Weather Positive Psychology</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌈 Weather & Well-being</h1>
+            <p class="subtitle">天气积极心理学</p>
+        </header>
+
+        <main>
+            <div class="weather-card">
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Fetching weather data...</p>
+                </div>
+
+                <div class="weather-content" id="weatherContent" style="display: none;">
+                    <div class="weather-icon-container">
+                        <div class="weather-icon" id="weatherIcon">🌤️</div>
+                    </div>
+
+                    <div class="weather-info">
+                        <h2 class="location" id="location">Your Location</h2>
+                        <div class="temperature" id="temperature">--°C</div>
+                        <div class="weather-description" id="weatherDescription">Loading...</div>
+                        <div class="weather-details">
+                            <span class="detail" id="humidity">💧 --% Humidity</span>
+                            <span class="detail" id="wind">💨 -- km/h Wind</span>
+                        </div>
+                    </div>
+
+                    <div class="message-card">
+                        <div class="message-icon">✨</div>
+                        <p class="positive-message" id="positiveMessage">
+                            Loading your personalized message...
+                        </p>
+                    </div>
+                </div>
+
+                <div class="error-message" id="errorMessage" style="display: none;">
+                    <div class="error-icon">⚠️</div>
+                    <p id="errorText">Unable to fetch weather data</p>
+                    <button class="retry-button" onclick="location.reload()">Try Again</button>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Refresh the page for a new uplifting message! 🌟</p>
+            <p class="credit">Powered by OpenWeatherMap API</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
