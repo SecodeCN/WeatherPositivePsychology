@@ -36,7 +36,8 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
+          # Upload only the static site files (HTML, CSS, JS)
+          # The action automatically excludes .git, .github, and other hidden files
           path: '.'
       - name: Deploy to GitHub Pages
         id: deployment
