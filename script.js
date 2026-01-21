@@ -85,22 +85,58 @@ const weatherIcons = {
 
 // Get user's location and fetch weather
 function initApp() {
+    updateLoadingText('正在获取位置信息... / Fetching location...');
+    
     if (navigator.geolocation) {
+        // Request location with timeout
         navigator.geolocation.getCurrentPosition(
             position => {
+                updateLoadingText('正在获取天气数据... / Fetching weather data...');
                 const lat = position.coords.latitude;
                 const lon = position.coords.longitude;
                 fetchWeather(lat, lon);
             },
             error => {
                 console.log('Geolocation error:', error);
-                // Default to a sample city (Beijing) if geolocation fails
-                fetchWeatherByCity('Beijing');
+                handleGeolocationError(error);
+            },
+            {
+                timeout: 10000, // 10 second timeout
+                enableHighAccuracy: true,
+                maximumAge: 300000 // Cache position for 5 minutes
             }
         );
     } else {
-        // Fallback to default city
-        fetchWeatherByCity('Beijing');
+        showError('您的浏览器不支持地理定位功能。请手动输入城市。<br>Your browser doesn\'t support geolocation. Please enter a city manually.');
+    }
+}
+
+// Handle geolocation errors with user-friendly messages
+function handleGeolocationError(error) {
+    let errorMessage = '';
+    
+    switch(error.code) {
+        case error.PERMISSION_DENIED:
+            errorMessage = '位置访问被拒绝。请在浏览器设置中允许位置访问，或手动输入城市名。<br>Location access denied. Please allow location access in browser settings, or enter a city name manually.';
+            break;
+        case error.POSITION_UNAVAILABLE:
+            errorMessage = '无法获取位置信息。请检查您的设备设置或手动输入城市名。<br>Location unavailable. Please check your device settings or enter a city name manually.';
+            break;
+        case error.TIMEOUT:
+            errorMessage = '获取位置超时。请检查网络连接或手动输入城市名。<br>Location request timed out. Please check your connection or enter a city name manually.';
+            break;
+        default:
+            errorMessage = '获取位置时发生未知错误。请手动输入城市名。<br>Unknown error occurred. Please enter a city name manually.';
+    }
+    
+    showError(errorMessage);
+}
+
+// Update loading text
+function updateLoadingText(text) {
+    const loadingTextElement = document.getElementById('loadingText');
+    if (loadingTextElement) {
+        loadingTextElement.innerHTML = text;
     }
 }
 
@@ -228,8 +264,78 @@ function generatePositiveMessage(condition) {
 function showError(message) {
     document.getElementById('loading').style.display = 'none';
     document.getElementById('errorMessage').style.display = 'block';
-    document.getElementById('errorText').textContent = message;
+    document.getElementById('errorText').innerHTML = message;
+}
+
+// Retry location fetch
+function retryLocationFetch() {
+    // Hide error and show loading
+    document.getElementById('errorMessage').style.display = 'none';
+    document.getElementById('loading').style.display = 'block';
+    // Restart the app
+    initApp();
+}
+
+// Search weather by city name from user input
+function searchWeatherByCity() {
+    const cityInput = document.getElementById('cityInput');
+    const city = cityInput.value.trim();
+    
+    if (!city) {
+        alert('请输入城市名 / Please enter a city name');
+        return;
+    }
+    
+    // Hide error and show loading
+    document.getElementById('errorMessage').style.display = 'none';
+    document.getElementById('loading').style.display = 'block';
+    updateLoadingText('正在搜索城市... / Searching for city...');
+    
+    fetchWeatherByCity(city);
+}
+
+// Refresh location
+function refreshLocation() {
+    // Show loading
+    document.getElementById('weatherContent').style.display = 'none';
+    document.getElementById('loading').style.display = 'block';
+    // Restart the app
+    initApp();
+}
+
+// Set up event listeners
+function setupEventListeners() {
+    // Retry button
+    const retryButton = document.getElementById('retryButton');
+    if (retryButton) {
+        retryButton.addEventListener('click', retryLocationFetch);
+    }
+    
+    // Search button
+    const searchButton = document.getElementById('searchButton');
+    if (searchButton) {
+        searchButton.addEventListener('click', searchWeatherByCity);
+    }
+    
+    // City input - allow Enter key
+    const cityInput = document.getElementById('cityInput');
+    if (cityInput) {
+        cityInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                searchWeatherByCity();
+            }
+        });
+    }
+    
+    // Refresh location button
+    const refreshLocationBtn = document.getElementById('refreshLocation');
+    if (refreshLocationBtn) {
+        refreshLocationBtn.addEventListener('click', refreshLocation);
+    }
 }
 
 // Initialize the app when DOM is loaded
-document.addEventListener('DOMContentLoaded', initApp);
+document.addEventListener('DOMContentLoaded', () => {
+    setupEventListeners();
+    initApp();
+});
