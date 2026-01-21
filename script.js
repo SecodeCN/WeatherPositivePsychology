@@ -83,15 +83,55 @@ const weatherIcons = {
     default: '🌤️'
 };
 
+// Bilingual UI messages
+const uiMessages = {
+    loading: {
+        fetchingLocation: '正在获取位置信息... / Fetching location...',
+        fetchingWeather: '正在获取天气数据... / Fetching weather data...',
+        searchingCity: '正在搜索城市... / Searching for city...'
+    },
+    errors: {
+        permissionDenied: {
+            zh: '位置访问被拒绝。请在浏览器设置中允许位置访问，或手动输入城市名。',
+            en: 'Location access denied. Please allow location access in browser settings, or enter a city name manually.'
+        },
+        positionUnavailable: {
+            zh: '无法获取位置信息。请检查您的设备设置或手动输入城市名。',
+            en: 'Location unavailable. Please check your device settings or enter a city name manually.'
+        },
+        timeout: {
+            zh: '获取位置超时。请检查网络连接或手动输入城市名。',
+            en: 'Location request timed out. Please check your connection or enter a city name manually.'
+        },
+        unknown: {
+            zh: '获取位置时发生未知错误。请手动输入城市名。',
+            en: 'Unknown error occurred. Please enter a city name manually.'
+        },
+        noGeolocation: {
+            zh: '您的浏览器不支持地理定位功能。请手动输入城市。',
+            en: 'Your browser doesn\'t support geolocation. Please enter a city manually.'
+        },
+        noCityName: {
+            zh: '请输入城市名',
+            en: 'Please enter a city name'
+        }
+    }
+};
+
+// Helper function to format bilingual error messages
+function formatBilingualMessage(messageObj) {
+    return `${messageObj.zh}<br>${messageObj.en}`;
+}
+
 // Get user's location and fetch weather
 function initApp() {
-    updateLoadingText('正在获取位置信息... / Fetching location...');
+    updateLoadingText(uiMessages.loading.fetchingLocation);
     
     if (navigator.geolocation) {
         // Request location with timeout
         navigator.geolocation.getCurrentPosition(
             position => {
-                updateLoadingText('正在获取天气数据... / Fetching weather data...');
+                updateLoadingText(uiMessages.loading.fetchingWeather);
                 const lat = position.coords.latitude;
                 const lon = position.coords.longitude;
                 fetchWeather(lat, lon);
@@ -107,36 +147,36 @@ function initApp() {
             }
         );
     } else {
-        showError('您的浏览器不支持地理定位功能。请手动输入城市。<br>Your browser doesn\'t support geolocation. Please enter a city manually.');
+        showError(formatBilingualMessage(uiMessages.errors.noGeolocation));
     }
 }
 
 // Handle geolocation errors with user-friendly messages
 function handleGeolocationError(error) {
-    let errorMessage = '';
+    let errorMessage;
     
     switch(error.code) {
         case error.PERMISSION_DENIED:
-            errorMessage = '位置访问被拒绝。请在浏览器设置中允许位置访问，或手动输入城市名。<br>Location access denied. Please allow location access in browser settings, or enter a city name manually.';
+            errorMessage = uiMessages.errors.permissionDenied;
             break;
         case error.POSITION_UNAVAILABLE:
-            errorMessage = '无法获取位置信息。请检查您的设备设置或手动输入城市名。<br>Location unavailable. Please check your device settings or enter a city name manually.';
+            errorMessage = uiMessages.errors.positionUnavailable;
             break;
         case error.TIMEOUT:
-            errorMessage = '获取位置超时。请检查网络连接或手动输入城市名。<br>Location request timed out. Please check your connection or enter a city name manually.';
+            errorMessage = uiMessages.errors.timeout;
             break;
         default:
-            errorMessage = '获取位置时发生未知错误。请手动输入城市名。<br>Unknown error occurred. Please enter a city name manually.';
+            errorMessage = uiMessages.errors.unknown;
     }
     
-    showError(errorMessage);
+    showError(formatBilingualMessage(errorMessage));
 }
 
 // Update loading text
 function updateLoadingText(text) {
     const loadingTextElement = document.getElementById('loadingText');
     if (loadingTextElement) {
-        loadingTextElement.innerHTML = text;
+        loadingTextElement.textContent = text;
     }
 }
 
@@ -264,6 +304,7 @@ function generatePositiveMessage(condition) {
 function showError(message) {
     document.getElementById('loading').style.display = 'none';
     document.getElementById('errorMessage').style.display = 'block';
+    // Use innerHTML safely as message comes from controlled sources only
     document.getElementById('errorText').innerHTML = message;
 }
 
@@ -282,14 +323,24 @@ function searchWeatherByCity() {
     const city = cityInput.value.trim();
     
     if (!city) {
-        alert('请输入城市名 / Please enter a city name');
+        // Create a temporary error display instead of alert
+        const errorText = document.getElementById('errorText');
+        const originalMessage = errorText.innerHTML;
+        errorText.innerHTML = formatBilingualMessage(uiMessages.errors.noCityName);
+        errorText.style.color = '#F59E0B';
+        
+        // Reset after 2 seconds
+        setTimeout(() => {
+            errorText.innerHTML = originalMessage;
+            errorText.style.color = '';
+        }, 2000);
         return;
     }
     
     // Hide error and show loading
     document.getElementById('errorMessage').style.display = 'none';
     document.getElementById('loading').style.display = 'block';
-    updateLoadingText('正在搜索城市... / Searching for city...');
+    updateLoadingText(uiMessages.loading.searchingCity);
     
     fetchWeatherByCity(city);
 }
