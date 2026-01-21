@@ -3,6 +3,9 @@
 
 A single-page web application that combines real-time weather data with positive psychology principles to deliver uplifting, personalized messages based on current weather conditions.
 
+## 🌐 Live Demo
+Visit the live application: [https://secodecn.github.io/WeatherPositivePsychology/](https://secodecn.github.io/WeatherPositivePsychology/)
+
 ## Features
 
 - 🌤️ **Real-time Weather Data**: Fetches current weather and temperature via API
@@ -13,10 +16,17 @@ A single-page web application that combines real-time weather data with positive
 
 ## How to Use
 
-1. Open `index.html` in a modern web browser
-2. Allow location access when prompted (optional - defaults to a sample city)
+### Using the Live Site
+1. Visit [https://secodecn.github.io/WeatherPositivePsychology/](https://secodecn.github.io/WeatherPositivePsychology/)
+2. Allow location access when prompted (optional - you can manually enter a city name)
 3. View the current weather and receive an uplifting message
 4. Refresh the page to get a new positive message
+
+### Running Locally
+1. Clone this repository
+2. Open `index.html` in a modern web browser
+3. Allow location access when prompted (optional - defaults to a sample city)
+4. View the current weather and receive an uplifting message
 
 ## Weather API
 
@@ -38,6 +48,16 @@ This app uses the OpenWeatherMap API. For production use:
 - Responsive and accessible
 - Positive psychology integration
 - Weather-responsive visual feedback
+
+## Deployment
+
+This application is automatically deployed to GitHub Pages using GitHub Actions. Any push to the `main` branch will trigger a new deployment.
+
+### Setting up GitHub Pages
+1. Go to your repository settings
+2. Navigate to "Pages" section
+3. Under "Build and deployment", select "GitHub Actions" as the source
+4. The workflow in `.github/workflows/static.yml` will handle the deployment
 
 ## License
 
