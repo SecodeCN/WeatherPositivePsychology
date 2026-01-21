@@ -18,7 +18,7 @@
             <div class="weather-card">
                 <div class="loading" id="loading">
                     <div class="spinner"></div>
-                    <p>Fetching weather data...</p>
+                    <p id="loadingText">正在获取位置信息... / Fetching location...</p>
                 </div>
 
                 <div class="weather-content" id="weatherContent" style="display: none;">
@@ -27,7 +27,10 @@
                     </div>
 
                     <div class="weather-info">
-                        <h2 class="location" id="location">Your Location</h2>
+                        <div class="location-header">
+                            <h2 class="location" id="location">Your Location</h2>
+                            <button class="refresh-location-btn" id="refreshLocation" title="刷新位置 / Refresh location">📍</button>
+                        </div>
                         <div class="temperature" id="temperature">--°C</div>
                         <div class="weather-description" id="weatherDescription">Loading...</div>
                         <div class="weather-details">
@@ -47,7 +50,13 @@
                 <div class="error-message" id="errorMessage" style="display: none;">
                     <div class="error-icon">⚠️</div>
                     <p id="errorText">Unable to fetch weather data</p>
-                    <button class="retry-button" onclick="location.reload()">Try Again</button>
+                    <div class="error-actions">
+                        <button class="retry-button" id="retryButton">重试 / Try Again</button>
+                        <div class="manual-location">
+                            <input type="text" id="cityInput" placeholder="输入城市名 / Enter city name" />
+                            <button class="search-button" id="searchButton">搜索 / Search</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
